@@ -38,7 +38,7 @@ export default function Wheel({ teams, rotation, className, style }) {
     <div className="relative" style={{ ...style, maxWidth: '200px', maxHeight: '200px' }}>
       {/* Rotating wheel */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 z-0"
         style={{
           transform: `rotate(${rotation}deg)`,
           transition: 'transform 3s cubic-bezier(0.33, 0, 0.66, 1)',
