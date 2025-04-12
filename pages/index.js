@@ -47,6 +47,7 @@ export default function Home() {
     setRemainingTeams([]);
     setSimulationResults(null);
     setSpinId(0);
+    setRotation(0); // Reset rotation when setting new teams
   };
 
   const startDraft = () => {
@@ -57,7 +58,7 @@ export default function Home() {
     setRemainingTeams([...teams]);
     setSelectedOrder([]);
     setDraftStarted(true);
-    setRotation(0);
+    setRotation(0); // Reset rotation at draft start
     setSpinId(0);
   };
 
@@ -76,20 +77,20 @@ export default function Home() {
       return { team: t, start, end };
     });
     const segment = segments.find((s) => s.team === team);
-    // Adjust for stationary arrow at top (0°)
     const targetAngle = ((segment.start + segment.end) / 2 + 360) % 360;
     const spins = 5;
-    const newRotation = -targetAngle + 360 * spins; // Positive for <g> rotation
+    // Use previous rotation as base, add new spin
+    const newRotation = rotation - targetAngle + 360 * spins;
 
-    console.log(`Starting spin #${spinId + 1} to ${newRotation}deg for team ${team.name}`);
+    console.log(`Starting spin #${spinId + 1} from ${rotation}deg to ${newRotation}deg for team ${team.name}`);
     setRotation(newRotation);
 
     setTimeout(() => {
-      console.log(`Spin #${spinId + 1} complete, resetting to 0deg`);
+      console.log(`Spin #${spinId + 1} complete, staying at ${newRotation}deg`);
       setSpinning(false);
       setSelectedOrder([...selectedOrder, team]);
       setRemainingTeams(remainingTeams.filter((t) => t !== team));
-      setRotation(0);
+      // Removed setRotation(0) to keep final rotation
     }, 3100);
   };
 
@@ -116,7 +117,10 @@ export default function Home() {
         <h2 className="text-2xl font-semibold mb-4">Enter Teams</h2>
         <div className="bg-white shadow-md rounded-lg p-4">
           {teamInputs.map((input, index) => (
-            <div key={index} className="flex items-center space-x-2 mb-3 last:mb-0">
+            <div
+              key={index}
+              className="flex items-center space-x-2 mb-3 last:mb-0"
+            >
               <input
                 type="text"
                 value={input.name}
@@ -135,13 +139,13 @@ export default function Home() {
               />
             </div>
           ))}
+          <button
+            onClick={setTeamsFromInput}
+            className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Set Teams
+          </button>
         </div>
-        <button
-          onClick={setTeamsFromInput}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Set Teams
-        </button>
       </section>
 
       <section className="mb-8">
@@ -153,25 +157,25 @@ export default function Home() {
                 <Wheel
                   teams={remainingTeams}
                   rotation={rotation}
-                  className="w-24 h-24 sm:w-24 sm:h-24"
+                  className="w-40 h-40 sm:w-48 sm:h-48"
                   style={{ maxWidth: '200px', maxHeight: '200px' }}
                 />
                 <button
                   onClick={spin}
                   disabled={spinning}
                   className={`mt-4 px-4 py-2 rounded text-white ${
-                    spinning ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'
-                  }`}
+                    spinning ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
+                  } transition-colors`}
                 >
                   {spinning ? 'Spinning...' : 'Spin for Pick ' + (selectedOrder.length + 1)}
                 </button>
               </>
             ) : (
-              <p className="text-lg">Draft Complete!</p>
+              <p className="text-lg text-gray-700">Draft Complete!</p>
             )}
             {selectedOrder.length > 0 && (
               <div className="mt-4 w-full">
-                <h3 className="text-xl font-medium">Draft Order:</h3>
+                <h3 className="text-xl font-medium mb-2">Draft Order:</h3>
                 <ol className="list-decimal list-inside bg-white shadow-md rounded-lg p-4">
                   {selectedOrder.map((team, index) => (
                     <li key={index} className="text-lg text-gray-800 py-1">{team.name}</li>
@@ -185,8 +189,8 @@ export default function Home() {
             onClick={startDraft}
             disabled={teams.length !== 6}
             className={`px-4 py-2 rounded text-white ${
-              teams.length !== 6 ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+              teams.length !== 6 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            } transition-colors`}
           >
             Start Draft
           </button>
@@ -208,9 +212,9 @@ export default function Home() {
           <button
             onClick={runSim}
             disabled={teams.length !== 6}
-            className={`px-4 py-2 rounded text-white ${
-              teams.length !== 6 ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+            className={`w-full sm:w-auto px-4 py-2 rounded text-white ${
+              teams.length !== 6 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            } transition-colors`}
           >
             Run Simulation
           </button>
