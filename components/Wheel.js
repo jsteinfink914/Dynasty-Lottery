@@ -36,6 +36,10 @@ export default function Wheel({ teams, rotation, className, style }) {
 
   return (
     <div className="relative" style={{ ...style, maxWidth: '300px', maxHeight: '300px' }}>
+        <div className="absolute inset-0 z-10 pointer-events-none">
+  <svg viewBox="0 0 100 100" className={className}>
+    <polygon points="50,5 45,-5 55,-5" fill="red" />
+  </svg>
       {/* Rotating wheel */}
       <div
         className="absolute inset-0 z-0"
@@ -83,10 +87,7 @@ export default function Wheel({ teams, rotation, className, style }) {
         </svg>
       </div>
       {/* Stationary red arrow, facing downward */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-  <svg viewBox="0 0 100 100" className={className}>
-    <polygon points="50,5 45,-5 55,-5" fill="red" />
-  </svg>
+      
 </div>
     </div>
   );
