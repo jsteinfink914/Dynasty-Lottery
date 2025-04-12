@@ -114,15 +114,15 @@ export default function Home() {
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Enter Teams</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-white shadow-md rounded-lg p-4">
           {teamInputs.map((input, index) => (
-            <div key={index} className="flex space-x-2">
+            <div key={index} className="flex items-center space-x-2 mb-3 last:mb-0">
               <input
                 type="text"
                 value={input.name}
                 onChange={(e) => handleInputChange(index, 'name', e.target.value)}
                 placeholder={`Team ${index + 1} Name`}
-                className="border p-2 rounded w-full"
+                className="border border-gray-300 p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <input
                 type="number"
@@ -131,7 +131,7 @@ export default function Home() {
                 placeholder="Odds"
                 min="0"
                 step="0.1"
-                className="border p-2 rounded w-24"
+                className="border border-gray-300 p-2 rounded-lg w-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           ))}
@@ -153,7 +153,7 @@ export default function Home() {
                 <Wheel
                   teams={remainingTeams}
                   rotation={rotation}
-                  className="w-40 h-40 sm:w-48 sm:h-48"
+                  className="w-12 h-12 sm:w-12 sm:h-12"
                   style={{ maxWidth: '200px', maxHeight: '200px' }}
                 />
                 <button
