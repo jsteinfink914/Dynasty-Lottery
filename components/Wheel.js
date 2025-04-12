@@ -30,20 +30,23 @@ export default function Wheel({ teams, rotation, className }) {
     return { team, startAngle, endAngle };
   });
 
-  // Use teams as key to force re-render when teams change
-  const wheelKey = teams.map((t) => t.name).join('-');
+  // Unique key to force re-render on team or rotation change
+  const wheelKey = `${teams.map((t) => t.name).join('-')}-${rotation}`;
+
+  console.log(`Wheel rendering with rotation: ${rotation}deg`);
 
   return (
     <svg
       key={wheelKey}
       viewBox="0 0 100 100"
-      className={`wheel ${className}`}
+      className={className} // Keep Tailwind sizing classes
       style={{
         transform: `rotate(${rotation}deg)`,
         transformOrigin: 'center',
+        transition: 'transform 3s cubic-bezier(0.33, 0, 0.66, 1)',
+        willChange: 'transform',
       }}
     >
-      {/* Wheel Segments */}
       {segments.map((segment, index) => {
         const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
         return (
@@ -56,7 +59,6 @@ export default function Wheel({ teams, rotation, className }) {
           />
         );
       })}
-      {/* Team Labels */}
       {segments.map((segment, index) => {
         const angle = (segment.startAngle + segment.endAngle) / 2;
         const [x, y] = Object.values(polarToCartesian(50, 50, 30, angle));
@@ -74,7 +76,6 @@ export default function Wheel({ teams, rotation, className }) {
           </text>
         );
       })}
-      {/* Pointer */}
       <polygon points="50,5 45,15 55,15" fill="red" />
     </svg>
   );
