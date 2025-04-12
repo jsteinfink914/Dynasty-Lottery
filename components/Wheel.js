@@ -20,7 +20,7 @@ function describeArc(x, y, radius, startAngle, endAngle) {
   ].join(' ');
 }
 
-export default function Wheel({ teams, rotation, className }) {
+export default function Wheel({ teams, rotation, className, style }) {
   const totalOdds = teams.reduce((sum, team) => sum + team.odds, 0);
   let cumulative = 0;
   const segments = teams.map((team) => {
@@ -30,7 +30,6 @@ export default function Wheel({ teams, rotation, className }) {
     return { team, startAngle, endAngle };
   });
 
-  // Unique key to force re-render on team or rotation change
   const wheelKey = `${teams.map((t) => t.name).join('-')}-${rotation}`;
 
   console.log(`Wheel rendering with rotation: ${rotation}deg`);
@@ -39,43 +38,53 @@ export default function Wheel({ teams, rotation, className }) {
     <svg
       key={wheelKey}
       viewBox="0 0 100 100"
-      className={className} // Keep Tailwind sizing classes
+      className={className}
       style={{
-        transform: `rotate(${rotation}deg)`,
-        transformOrigin: 'center',
-        transition: 'transform 3s cubic-bezier(0.33, 0, 0.66, 1)',
-        willChange: 'transform',
+        ...style,
+        maxWidth: '200px',
+        maxHeight: '200px',
       }}
     >
-      {segments.map((segment, index) => {
-        const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
-        return (
-          <path
-            key={index}
-            d={path}
-            fill={colors[index % colors.length]}
-            stroke="white"
-            strokeWidth="0.5"
-          />
-        );
-      })}
-      {segments.map((segment, index) => {
-        const angle = (segment.startAngle + segment.endAngle) / 2;
-        const [x, y] = Object.values(polarToCartesian(50, 50, 30, angle));
-        return (
-          <text
-            key={index}
-            x={x}
-            y={y}
-            textAnchor="middle"
-            fill="white"
-            fontSize="5"
-            dy=".35em"
-          >
-            {segment.team.name}
-          </text>
-        );
-      })}
+      {/* Rotating group for segments and labels */}
+      <g
+        style={{
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: 'center',
+          transition: 'transform 3s cubic-bezier(0.33, 0, 0.66, 1)',
+          willChange: 'transform',
+        }}
+      >
+        {segments.map((segment, index) => {
+          const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
+          return (
+            <path
+              key={`path-${index}`}
+              d={path}
+              fill={colors[index % colors.length]}
+              stroke="white"
+              strokeWidth="0.5"
+            />
+          );
+        })}
+        {segments.map((segment, index) => {
+          const angle = (segment.startAngle + segment.endAngle) / 2;
+          const [x, y] = Object.values(polarToCartesian(50, 50, 30, angle));
+          return (
+            <text
+              key={`text-${index}`}
+              x={x}
+              y={y}
+              textAnchor="middle"
+              fill="white"
+              fontSize="4"
+              dy=".35em"
+            >
+              {segment.team.name}
+            </text>
+          );
+        })}
+      </g>
+      {/* Stationary red arrow at top */}
       <polygon points="50,5 45,15 55,15" fill="red" />
     </svg>
   );

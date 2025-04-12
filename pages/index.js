@@ -13,6 +13,7 @@ export default function Home() {
   const [selectedOrder, setSelectedOrder] = useState([]);
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
+  const [spinId, setSpinId] = useState(0);
   const [simulationRounds, setSimulationRounds] = useState(1000);
   const [simulationResults, setSimulationResults] = useState(null);
 
@@ -45,6 +46,7 @@ export default function Home() {
     setSelectedOrder([]);
     setRemainingTeams([]);
     setSimulationResults(null);
+    setSpinId(0);
   };
 
   const startDraft = () => {
@@ -56,11 +58,13 @@ export default function Home() {
     setSelectedOrder([]);
     setDraftStarted(true);
     setRotation(0);
+    setSpinId(0);
   };
 
   const spin = () => {
     if (spinning || remainingTeams.length === 0) return;
     setSpinning(true);
+    setSpinId((prev) => prev + 1);
 
     const team = selectTeam(remainingTeams);
     const totalOdds = remainingTeams.reduce((sum, t) => sum + t.odds, 0);
@@ -72,19 +76,21 @@ export default function Home() {
       return { team: t, start, end };
     });
     const segment = segments.find((s) => s.team === team);
-    const targetAngle = (segment.start + segment.end) / 2;
-    const spins = 5; // Number of full rotations
-    const newRotation = -targetAngle - 360 * spins;
+    // Adjust for stationary arrow at top (0°)
+    const targetAngle = ((segment.start + segment.end) / 2 + 360) % 360;
+    const spins = 5;
+    const newRotation = -targetAngle + 360 * spins; // Positive for <g> rotation
 
-    console.log(`Spinning to rotation: ${newRotation}deg`); // Debug
+    console.log(`Starting spin #${spinId + 1} to ${newRotation}deg for team ${team.name}`);
     setRotation(newRotation);
 
     setTimeout(() => {
+      console.log(`Spin #${spinId + 1} complete, resetting to 0deg`);
       setSpinning(false);
       setSelectedOrder([...selectedOrder, team]);
       setRemainingTeams(remainingTeams.filter((t) => t !== team));
-      setRotation(0); // Reset for next spin
-    }, 3100); // Slightly longer than transition to ensure animation completes
+      setRotation(0);
+    }, 3100);
   };
 
   const runSim = () => {
@@ -144,7 +150,12 @@ export default function Home() {
           <div className="flex flex-col items-center">
             {remainingTeams.length > 0 ? (
               <>
-                <Wheel teams={remainingTeams} rotation={rotation} className="w-12 h-12 sm:w-12 sm:h-12" />
+                <Wheel
+                  teams={remainingTeams}
+                  rotation={rotation}
+                  className="w-40 h-40 sm:w-48 sm:h-48"
+                  style={{ maxWidth: '200px', maxHeight: '200px' }}
+                />
                 <button
                   onClick={spin}
                   disabled={spinning}
@@ -159,11 +170,11 @@ export default function Home() {
               <p className="text-lg">Draft Complete!</p>
             )}
             {selectedOrder.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-4 w-full">
                 <h3 className="text-xl font-medium">Draft Order:</h3>
-                <ol className="list-decimal list-inside">
+                <ol className="list-decimal list-inside bg-white shadow-md rounded-lg p-4">
                   {selectedOrder.map((team, index) => (
-                    <li key={index} className="text-lg">{team.name}</li>
+                    <li key={index} className="text-lg text-gray-800 py-1">{team.name}</li>
                   ))}
                 </ol>
               </div>
@@ -184,7 +195,7 @@ export default function Home() {
 
       <section>
         <h2 className="text-2xl font-semibold mb-4">Monte Carlo Simulation</h2>
-        <div className="flex space-x-4 items-center">
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-start sm:items-center">
           <input
             type="number"
             value={simulationRounds}
@@ -192,7 +203,7 @@ export default function Home() {
             placeholder="Number of Rounds"
             min="1"
             max="1000000"
-            className="border p-2 rounded w-32"
+            className="border border-gray-300 p-2 rounded-lg w-full sm:w-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
           <button
             onClick={runSim}
