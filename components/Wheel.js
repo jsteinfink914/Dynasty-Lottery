@@ -35,10 +35,16 @@ export default function Wheel({ teams, rotation, className, style }) {
   console.log(`Wheel rendering with rotation: ${rotation}deg`);
 
   return (
-    <div className="relative" style={{ ...style, maxWidth: '300px', maxHeight: '300px' }}>
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <svg viewBox="0 0 100 100" className={className}>
-          <polygon points="50,10 47,5 53,5" fill="red" />
+    <div
+      className="relative"
+      style={{ ...style, maxWidth: '300px', maxHeight: '300px', margin: 0, padding: 0 }}
+    >
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{ margin: 0, padding: 0 }}
+      >
+        <svg viewBox="0 0 100 100" className={className} style={{ margin: 0, padding: 0 }}>
+          <polygon points="50,5 48,3 52,3" fill="red" />
         </svg>
       </div>
       {/* Rotating wheel */}
@@ -48,13 +54,15 @@ export default function Wheel({ teams, rotation, className, style }) {
           transform: `rotate(${rotation}deg)`,
           transition: 'transform 3s cubic-bezier(0.33, 0, 0.66, 1)',
           willChange: 'transform',
+          margin: 0,
+          padding: 0,
         }}
       >
         <svg
           key={wheelKey}
           viewBox="0 0 100 100"
           className={className}
-          style={{ transform: 'rotate(0deg)' }}
+          style={{ transform: 'rotate(0deg)', margin: 0, padding: 0 }}
         >
           {segments.map((segment, index) => {
             const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
