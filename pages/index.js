@@ -93,7 +93,7 @@ export default function Home() {
 
   // Run the Monte Carlo simulation
   const runSim = () => {
-    if (teams.length !== 6) {
+    if (teams.length !== 6)
       alert('Please set 6 teams first.');
       return;
     }
@@ -151,7 +151,7 @@ export default function Home() {
           <div className="flex flex-col items-center">
             {remainingTeams.length > 0 ? (
               <>
-                <Wheel teams={remainingTeams} rotation={rotation} className="w-64 h-64" />
+                <Wheel teams={remainingTeams} rotation={rotation} className="sm:w-12 sm:h-12" />
                 <button
                   onClick={spin}
                   disabled={spinning}
@@ -218,4 +218,3 @@ export default function Home() {
       </section>
     </div>
   );
-}
