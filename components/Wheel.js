@@ -35,24 +35,22 @@ export default function Wheel({ teams, rotation, className, style }) {
   console.log(`Wheel rendering with rotation: ${rotation}deg`);
 
   return (
-    <svg
-      key={wheelKey}
-      viewBox="0 0 100 100"
-      className={className}
+    <div
+      className="relative"
       style={{
         ...style,
         maxWidth: '200px',
         maxHeight: '200px',
+        transform: `rotate(${rotation}deg)`,
+        animation: rotation !== 0 ? 'spin 3s cubic-bezier(0.33, 0, 0.66, 1) forwards' : 'none',
+        willChange: 'transform',
       }}
     >
-      {/* Rotating group for segments and labels */}
-      <g
-        style={{
-          transform: `rotate(${rotation}deg)`,
-          transformOrigin: 'center',
-          transition: 'transform 3s cubic-bezier(0.33, 0, 0.66, 1)',
-          willChange: 'transform',
-        }}
+      <svg
+        key={wheelKey}
+        viewBox="0 0 100 100"
+        className={className}
+        style={{ transform: 'rotate(0deg)' }}
       >
         {segments.map((segment, index) => {
           const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
@@ -83,9 +81,8 @@ export default function Wheel({ teams, rotation, className, style }) {
             </text>
           );
         })}
-      </g>
-      {/* Stationary red arrow at top */}
-      <polygon points="50,5 45,15 55,15" fill="red" />
-    </svg>
+        <polygon points="50,5 45,15 55,15" fill="red" />
+      </svg>
+    </div>
   );
 }
