@@ -35,54 +35,59 @@ export default function Wheel({ teams, rotation, className, style }) {
   console.log(`Wheel rendering with rotation: ${rotation}deg`);
 
   return (
-    <div
-      className="relative"
-      style={{
-        ...style,
-        maxWidth: '200px',
-        maxHeight: '200px',
-        transform: `rotate(${rotation}deg)`,
-        animation: rotation !== 0 ? 'spin 3s cubic-bezier(0.33, 0, 0.66, 1) forwards' : 'none',
-        willChange: 'transform',
-      }}
-    >
-      <svg
-        key={wheelKey}
-        viewBox="0 0 100 100"
-        className={className}
-        style={{ transform: 'rotate(0deg)' }}
+    <div className="relative" style={{ ...style, maxWidth: '200px', maxHeight: '200px' }}>
+      {/* Rotating wheel */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `rotate(${rotation}deg)`,
+          animation: rotation !== 0 ? 'spin 3s cubic-bezier(0.33, 0, 0.66, 1) forwards' : 'none',
+          willChange: 'transform',
+        }}
       >
-        {segments.map((segment, index) => {
-          const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
-          return (
-            <path
-              key={`path-${index}`}
-              d={path}
-              fill={colors[index % colors.length]}
-              stroke="white"
-              strokeWidth="0.5"
-            />
-          );
-        })}
-        {segments.map((segment, index) => {
-          const angle = (segment.startAngle + segment.endAngle) / 2;
-          const [x, y] = Object.values(polarToCartesian(50, 50, 30, angle));
-          return (
-            <text
-              key={`text-${index}`}
-              x={x}
-              y={y}
-              textAnchor="middle"
-              fill="white"
-              fontSize="4"
-              dy=".35em"
-            >
-              {segment.team.name}
-            </text>
-          );
-        })}
-        <polygon points="50,5 45,15 55,15" fill="red" />
-      </svg>
+        <svg
+          key={wheelKey}
+          viewBox="0 0 100 100"
+          className={className}
+          style={{ transform: 'rotate(0deg)' }}
+        >
+          {segments.map((segment, index) => {
+            const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
+            return (
+              <path
+                key={`path-${index}`}
+                d={path}
+                fill={colors[index % colors.length]}
+                stroke="white"
+                strokeWidth="0.5"
+              />
+            );
+          })}
+          {segments.map((segment, index) => {
+            const angle = (segment.startAngle + segment.endAngle) / 2;
+            const [x, y] = Object.values(polarToCartesian(50, 50, 30, angle));
+            return (
+              <text
+                key={`text-${index}`}
+                x={x}
+                y={y}
+                textAnchor="middle"
+                fill="white"
+                fontSize="4"
+                dy=".35em"
+              >
+                {segment.team.name}
+              </text>
+            );
+          })}
+        </svg>
+      </div>
+      {/* Stationary red arrow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <svg viewBox="0 0 100 100" className={className}>
+          <polygon points="50,5 45,15 55,15" fill="red" />
+        </svg>
+      </div>
     </div>
   );
 }
