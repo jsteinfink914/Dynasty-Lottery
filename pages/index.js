@@ -7,7 +7,7 @@ export default function Home() {
   // State for team inputs and app functionality
   const [teams, setTeams] = useState([]);
   const [teamInputs, setTeamInputs] = useState(
-    Array(6).fill({ name: '', odds: '' })
+    Array.from({ length: 6 }, () => ({ name: '', odds: '' }))
   );
   const [draftStarted, setDraftStarted] = useState(false);
   const [remainingTeams, setRemainingTeams] = useState([]);
@@ -19,9 +19,11 @@ export default function Home() {
 
   // Handle changes to team name and odds inputs
   const handleInputChange = (index, field, value) => {
-    const newInputs = [...teamInputs];
-    newInputs[index][field] = value;
-    setTeamInputs(newInputs);
+    setTeamInputs((prevInputs) =>
+      prevInputs.map((input, i) =>
+        i === index ? { ...input, [field]: value } : input
+      )
+    );
   };
 
   // Validate and set teams from inputs
