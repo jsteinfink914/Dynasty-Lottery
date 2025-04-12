@@ -85,7 +85,7 @@ export default function Wheel({ teams, rotation, className, style }) {
       {/* Stationary red arrow, facing downward */}
       <div className="absolute inset-0 z-10 pointer-events-none">
         <svg viewBox="0 0 100 100" className={className}>
-          <polygon points="50,7 45,0 55,0" fill="red" />
+          <polygon points="50,-100 45,-107 55,-107" fill="red" />
         </svg>
       </div>
     </div>
