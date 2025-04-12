@@ -4,7 +4,6 @@ import SimulationResults from '../components/SimulationResults';
 import { selectTeam, runSimulation } from '../utils/lottery';
 
 export default function Home() {
-  // State for team inputs and app functionality
   const [teams, setTeams] = useState([]);
   const [teamInputs, setTeamInputs] = useState(
     Array.from({ length: 6 }, () => ({ name: '', odds: '' }))
@@ -17,7 +16,6 @@ export default function Home() {
   const [simulationRounds, setSimulationRounds] = useState(1000);
   const [simulationResults, setSimulationResults] = useState(null);
 
-  // Handle changes to team name and odds inputs
   const handleInputChange = (index, field, value) => {
     setTeamInputs((prevInputs) =>
       prevInputs.map((input, i) =>
@@ -26,14 +24,12 @@ export default function Home() {
     );
   };
 
-  // Validate and set teams from inputs
   const setTeamsFromInput = () => {
     const newTeams = teamInputs.map((input) => ({
       name: input.name.trim(),
       odds: parseFloat(input.odds),
     }));
 
-    // Validation
     if (newTeams.length !== 6 || newTeams.some((team) => !team.name || isNaN(team.odds) || team.odds <= 0)) {
       alert('Please enter exactly 6 teams with valid names and positive odds.');
       return;
@@ -51,7 +47,6 @@ export default function Home() {
     setSimulationResults(null);
   };
 
-  // Start the draft lottery
   const startDraft = () => {
     if (teams.length !== 6) {
       alert('Please set 6 teams first.');
@@ -63,7 +58,6 @@ export default function Home() {
     setRotation(0);
   };
 
-  // Spin the wheel to select a team
   const spin = () => {
     if (spinning || remainingTeams.length === 0) return;
     setSpinning(true);
@@ -82,18 +76,19 @@ export default function Home() {
     const spins = 5; // Number of full rotations
     const newRotation = -targetAngle - 360 * spins;
 
+    console.log(`Spinning to rotation: ${newRotation}deg`); // Debug
     setRotation(newRotation);
+
     setTimeout(() => {
       setSpinning(false);
       setSelectedOrder([...selectedOrder, team]);
       setRemainingTeams(remainingTeams.filter((t) => t !== team));
-      setRotation(0);
-    }, 3000); // Match animation duration
+      setRotation(0); // Reset for next spin
+    }, 3100); // Slightly longer than transition to ensure animation completes
   };
 
-  // Run the Monte Carlo simulation
   const runSim = () => {
-    if (teams.length !== 6)
+    if (teams.length !== 6) {
       alert('Please set 6 teams first.');
       return;
     }
@@ -111,7 +106,6 @@ export default function Home() {
         Fantasy Football Draft Lottery
       </h1>
 
-      {/* Team Input Section */}
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Enter Teams</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -144,14 +138,13 @@ export default function Home() {
         </button>
       </section>
 
-      {/* Draft Lottery Section */}
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Draft Lottery</h2>
         {draftStarted ? (
           <div className="flex flex-col items-center">
             {remainingTeams.length > 0 ? (
               <>
-                <Wheel teams={remainingTeams} rotation={rotation} className="sm:w-12 sm:h-12" />
+                <Wheel teams={remainingTeams} rotation={rotation} className="w-24 h-24 sm:w-24 sm:h-24" />
                 <button
                   onClick={spin}
                   disabled={spinning}
@@ -189,7 +182,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* Simulation Section */}
       <section>
         <h2 className="text-2xl font-semibold mb-4">Monte Carlo Simulation</h2>
         <div className="flex space-x-4 items-center">
@@ -218,3 +210,4 @@ export default function Home() {
       </section>
     </div>
   );
+}

@@ -30,8 +30,19 @@ export default function Wheel({ teams, rotation, className }) {
     return { team, startAngle, endAngle };
   });
 
+  // Use teams as key to force re-render when teams change
+  const wheelKey = teams.map((t) => t.name).join('-');
+
   return (
-    <svg viewBox="0 0 100 100" className={`wheel ${className}`} style={{ transform: `rotate(${rotation}deg)`,transformOrigin: 'center' }}>
+    <svg
+      key={wheelKey}
+      viewBox="0 0 100 100"
+      className={`wheel ${className}`}
+      style={{
+        transform: `rotate(${rotation}deg)`,
+        transformOrigin: 'center',
+      }}
+    >
       {/* Wheel Segments */}
       {segments.map((segment, index) => {
         const path = describeArc(50, 50, 45, segment.startAngle, segment.endAngle);
