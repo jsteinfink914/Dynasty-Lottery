@@ -153,7 +153,7 @@ export default function Home() {
                 <Wheel
                   teams={remainingTeams}
                   rotation={rotation}
-                  className="w-16 h-16 sm:w-16 sm:h-16"
+                  className="w-24 h-24 sm:w-24 sm:h-24"
                   style={{ maxWidth: '200px', maxHeight: '200px' }}
                 />
                 <button
